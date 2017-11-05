@@ -40,6 +40,7 @@ except:		# json not defined, give a text/html response
 	#print '<div id="slider"></div>'
 
 	print '<span>Air temperature is %d &deg;F</span></br>' % ( int(httpcontroller.getairtemp()))
+	print '<span>Solar temperature is %d &deg;F</span></br>' % ( int(httpcontroller.getsolartemp()))
 	print '<span>Water temperature is %d &deg;F</span></br>' % ( int(httpcontroller.getwatertemp()))
 	print '<span>Pool Set Temperature: <input type="text" size="4" name="poolsettemp" value="%s">&deg;F</span></br>' % (httpcontroller.getpoolsettemp())
 	print '<span>Spa Set Temperature: <input type="text" size="4" name="spasettemp" value="%s">&deg;F</span></br>' % (httpcontroller.getspasettemp())

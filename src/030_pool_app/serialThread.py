@@ -75,7 +75,7 @@ class serialThread (threading.Thread):
 		self.p2 = p2
 		self.exit = False
 		threading.Thread.__init__(self)
-		# logging.basicConfig( filename="serial.log", level=logging.DEBUG )
+		#logging.basicConfig( filename="serial.log", level=logging.DEBUG )
 		if gSendStats == True:
                         self.statsclient = StatsdClient( statsServer, statsPort )
                 else:
@@ -94,10 +94,12 @@ class serialThread (threading.Thread):
 			output = self.ser.read(scanlen)
 			for i in output:
 				inputBuffer.append( ord(i) )		# append bytes
+				d = ord(i)
+				#print d,"\t",hex(d),"\t","{0:08b}".format(d)
+
 
 			#data.append(ord(output))
 			#ascdata += output
-			#print x,"\t",d,"\t",hex(d),"\t","{0:08b}".format(d)
 
 			if len(inputBuffer) > 50:	# start searching for packet header
   				## find start of packet
@@ -307,6 +309,8 @@ class serialThread (threading.Thread):
 			waterTemp=23
 			heaterTemp=24
 			airTemp=27
+			solarTemp=28
+			heatMode=31
 			clockHours=9
 			clockMinutes=10
 
@@ -316,9 +320,18 @@ class serialThread (threading.Thread):
 			logging.debug( "  Wallclock %s, Pool Time %s" % (localtime, pooltime))
 			self.controller.setwallclocktime( localtime )
 			self.controller.setpoolclocktime( pooltime )
+
+			heatModeStr={
+				0: "off",
+				1: "heater",
+				2: "solarpref",
+				3: "solar",
+			}[data[heatMode]]
 	
 			#print "  Air %s, Water %s" % (data[airTemp], data[waterTemp])
 			#print "  Heater Temperature: ",data[heaterTemp]
+			#print "  Solar Temperature: ",data[solarTemp]
+			#print "  Heat Mode: ",heatModeStr
 
 			equip = [ "{0:08b}".format(data[11]), "{0:08b}".format(data[12]) ]
 			for i in range(len(equip)):
@@ -327,6 +340,7 @@ class serialThread (threading.Thread):
 			# update controller values
 			self.controller.setwatertemp( data[waterTemp] )
 			self.controller.setairtemp( data[airTemp] )
+			self.controller.setsolartemp( data[solarTemp] )
 			for byte in range(2):
 				for bit in range(8):
 					abit = 7 - bit

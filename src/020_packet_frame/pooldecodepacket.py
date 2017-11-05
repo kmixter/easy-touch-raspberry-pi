@@ -21,17 +21,17 @@ def updateVera(device,variable,value):
 
 output = " "
 
-ser = serial.Serial('/dev/ttyAMA0', baudrate=9600, timeout=3)
+ser = serial.Serial('/dev/ttyUSB0', baudrate=9600, timeout=3)
 scanlen = 200
 while True:
   ascdata=""
   data=[]
   for x in range(scanlen):
 	output = ser.read()
+        d = ord(output)
 	data.append(ord(output))
 	ascdata += output
-	#print x,"\t",d,"\t",hex(d),"\t","{0:08b}".format(d)
-
+	print x,"\t",d,"\t",hex(d),"\t","{0:08b}".format(d)
 
   ## find start of packet
   #start=[255,255,255,255,0,255,165,39]

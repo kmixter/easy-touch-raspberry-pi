@@ -15,15 +15,15 @@ import redis
 # byte 1 is equipment byte 1 in status message,
 # byte 2 is equipment byte 2 in status message
 circuits = {	
-		1 : { 'name' : 'spa', 'byte' : 1, 'bit' : 0 },
+		1 : { 'name' : '#spa', 'byte' : 1, 'bit' : 0 },
 		2 : { 'name' : 'pool pump', 'byte' : 1, 'bit' : 5 },
-		3 : { 'name' : 'jets 1', 'byte' : 1, 'bit' : 1 },
-		4 : { 'name' : 'jets 2', 'byte' : 1, 'bit' : 2 },
-		5 : { 'name' : 'spillway', 'byte' : 1, 'bit' : 3 },
-		6 : { 'name' : 'waterfall', 'byte' : 1, 'bit' : 4 },
-		7 : { 'name' : 'slide', 'byte' : 1, 'bit' : 6 },
-		8 : { 'name' : 'pool light', 'byte' : 1, 'bit' : 7 },
-		9 : { 'name' : 'spa light', 'byte' : 2, 'bit' : 0 },
+		3 : { 'name' : 'cleaner', 'byte' : 1, 'bit' : 1 },
+		4 : { 'name' : 'pool light', 'byte' : 1, 'bit' : 2 },
+		5 : { 'name' : '#spillway', 'byte' : 1, 'bit' : 3 },
+		6 : { 'name' : '#waterfall', 'byte' : 1, 'bit' : 4 },
+		7 : { 'name' : '#slide', 'byte' : 1, 'bit' : 6 },
+		8 : { 'name' : '#pool light', 'byte' : 1, 'bit' : 7 },
+		9 : { 'name' : '#spa light', 'byte' : 2, 'bit' : 0 },
 	}
 
 circuitlist=[]
@@ -47,13 +47,13 @@ def sigint_handler(signum, frame):
 # card so do not keep it there in normal operation
 
 #logging.basicConfig( filename='debug.log', level=logging.DEBUG )
-logging.basicConfig( filename='debug.log', level=logging.INFO )
+logging.basicConfig( filename='debug.log', level=logging.DEBUG )
 
 # pass the circuits to the serial thread for decoding and stuffing
 # in the redis database
 controller = controller.controller( circuitlist )
 #controller.save()
-serialT = serialThread.serialThread( '/dev/ttyAMA0', controller, 2)
+serialT = serialThread.serialThread( '/dev/ttyUSB0', controller, 2)
 cmdT = serialThread.cmdThread()
 httpT = httpThread.httpThread(1,2)
 

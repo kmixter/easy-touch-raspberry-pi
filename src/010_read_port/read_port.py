@@ -5,7 +5,7 @@ import time
 import sys
 import hexdump
 
-ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=0)
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=0)
 
 while True:
   # ser.write("hello")

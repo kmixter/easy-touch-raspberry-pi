@@ -8,7 +8,7 @@ import time
 from python_example import StatsdClient
 
 gSendStats = True   #  djm True
-statsServer = "stats.minear.homeunix.com"
+statsServer = "localhost"
 statsPort = 8125
 
 class controller(object):
@@ -18,6 +18,7 @@ class controller(object):
 		self.spasettemp = 96		# deg F
 		self.poolsettemp = 45		# deg F
 		self.airtemp = 70		# deg F
+		self.solartemp = 70		# deg F
 		self.hash = 0			# for caching
 		self.oldhash = 1
 		self.responsestart = 0
@@ -79,6 +80,13 @@ class controller(object):
 			self.airtemp = temp
 			self.updatehash()
 
+	def setsolartemp( self, temp ):
+		if self.solartemp != temp:
+			if gSendStats == True:
+				self.statsclient.gauge( "pool.solartemp", temp )
+			self.solartemp = temp
+			self.updatehash()
+
 	def getwatertemp( self ):
 		return self.watertemp
 
@@ -91,10 +99,14 @@ class controller(object):
 	def getairtemp( self ):
 		return self.airtemp
 
+	def getsolartemp( self ):
+		return self.solartemp
+
 	def updatehash(self):
 		h = 0
 		for a in self.circuitlist:
 			h += a.getHash()
+		h += int(self.solartemp) * 10000
 		h += int(self.watertemp) * 1000
 		h += int(self.spasettemp) * 100
 		h += int(self.poolsettemp) * 50
@@ -145,6 +157,7 @@ class controller(object):
 			for c in self.circuitlist:
 				d[c.getNumber()] = json.dumps(c.todict())
 			d["airtemp"] = self.airtemp
+			d["solartemp"] = self.solartemp
 			d["watertemp"] = self.watertemp
 			d["spasettemp"] = self.spasettemp
 			d["poolsettemp"] = self.poolsettemp
@@ -173,6 +186,8 @@ class controller(object):
 				self.walltime = d[k]
 			elif k == "airtemp":
 				self.airtemp = d[k]
+			elif k == "solartemp":
+				self.solartemp = d[k]
 			elif k == "watertemp":
 				self.watertemp = d[k]
 			elif k == "spasettemp":
