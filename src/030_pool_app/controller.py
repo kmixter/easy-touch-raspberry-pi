@@ -2,8 +2,9 @@
 # equipment bytes are 1 and 2, bits 0 - 7
 
 import circuit
-import redis
 import json
+import redis
+import spreadsheet
 import time
 from python_example import StatsdClient
 
@@ -26,6 +27,7 @@ class controller(object):
 		self.pooltime = "00:00"
 		self.walltime = "00:00"
 		self.r = redis.StrictRedis( host='localhost', port=6379, db=0)
+		self.spreadsheet = spreadsheet.Spreadsheet()
 		self.password = ''
 		if gSendStats == True:
 			self.statsclient = StatsdClient( statsServer, statsPort )
@@ -168,6 +170,7 @@ class controller(object):
 			# redis-cli hgetall pool
 			# to see all the data stored in redis
 			self.r.hmset( "pool", d )
+			self.spreadsheet.store(d)
 			self.oldhash = self.hash
 			# we are never going to save the password, only
 			# the set_password.py script will do this
